@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Geom. Tartagni Marco - Amministrazione Condomini</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-size='80' font-family='serif' fill='white' text-anchor='middle' dominant-baseline='central'%3ETM%3C/text%3E%3C/svg%3E">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        :root {
+            --primary-color: #00aaff; --secondary-color: #0077cc; --background-color: #0a0f1a;
+            --surface-color: #121a2a; --text-color: #e0e0e0; --heading-color: #ffffff;
+            --font-family: 'Poppins', sans-serif; --success-color: #28a745; --danger-color: #dc3545;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-family); background-color: var(--background-color); color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header { background-color: rgba(18, 26, 42, 0.85); backdrop-filter: blur(10px); padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--heading-color); text-decoration: none; }
+        .logo span { color: var(--primary-color); }
+        .nav-links { list-style: none; display: flex; align-items: center; }
+        .nav-links li { margin-left: 25px; }
+        .nav-links a { color: var(--text-color); text-decoration: none; font-weight: 600; transition: color 0.3s ease; position: relative; padding: 5px 0; }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; transform: translateX(-50%); background-color: var(--primary-color); transition: width 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .notification-badge { background-color: var(--danger-color); color: white; width: 8px; height: 8px; border-radius: 50%; display: block; position: absolute; top: 0px; right: -12px; border: 1px solid var(--background-color); }
+        .hamburger { display: none; cursor: pointer; }
+        .hamburger div { width: 25px; height: 3px; background-color: white; margin: 5px; transition: all 0.3s ease; }
+        main { padding-top: 100px; }
+        .page { display: none; min-height: calc(100vh - 180px); padding: 4rem 0; animation: fadeIn 0.8s ease-in-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1, h2, h3, h4 { color: var(--heading-color); margin-bottom: 1rem; }
+        h1 { font-size: 3rem; font-weight: 700; } h2 { font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+        .hero { text-align: center; padding: 4rem 0; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 4rem; text-align: center;}
+        .feature-card { background-color: var(--surface-color); padding: 2rem; border-radius: 10px; border-bottom: 3px solid var(--primary-color); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .feature-card .icon { font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .intro-text { text-align: center; max-width: 800px; margin: 0 auto 4rem auto; }
+        .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .value-card { background-color: var(--surface-color); padding: 2rem; border-radius: 10px; text-align: center; }
+        .value-card .icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .form-container, .content-container { background-color: var(--surface-color); padding: 2.5rem; border-radius: 10px; max-width: 700px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border-left: 3px solid var(--primary-color); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem 1rem; background-color: var(--background-color); border: 1px solid #333; border-radius: 5px; color: var(--text-color); font-size: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        .btn { display: inline-block; background-color: var(--primary-color); color: #fff; padding: 0.8rem 1.8rem; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 1rem; transition: background-color 0.3s ease, transform 0.2s ease; }
+        .btn:hover { background-color: var(--secondary-color); transform: translateY(-2px); }
+        .btn-delete { background-color: var(--danger-color); } .btn-delete:hover { background-color: #c82333; }
+        .btn-approve { background-color: var(--success-color); }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem; }
+        .dashboard-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; }
+        .dashboard-stats { display: flex; gap: 1.5rem; flex-wrap: wrap;}
+        .stat-card { background-color: var(--surface-color); padding: 0.8rem 1.2rem; border-radius: 8px; text-align: center;}
+        .stat-card .value { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); }
+        #dashboard-page .tabs { display: flex; margin-bottom: 2rem; border-bottom: 1px solid #333; flex-wrap: wrap; }
+        .tab-button { padding: 1rem 1.5rem; cursor: pointer; background: none; border: none; color: var(--text-color); font-size: 1rem; font-weight: 600; transition: color 0.3s, border-bottom 0.3s; border-bottom: 3px solid transparent; position: relative; }
+        .tab-button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        .dashboard-card, .signal-preview-card { background-color: var(--surface-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 3px solid var(--primary-color); }
+        .signal-preview-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .signal-preview-actions { display: flex; gap: 0.5rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+        .modal-content { background-color: var(--surface-color); padding: 2rem; border-radius: 10px; text-align: center; max-width: 90%; width: 500px; transform: scale(0.9); transition: transform 0.3s ease; border-top: 3px solid var(--primary-color); }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+        .modal-content .modal-actions { margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; }
+        .detail-view-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .detail-view-img { max-width: 100%; height: auto; border-radius: 8px; margin-top: 1rem; }
+        .contact-layout { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; }
+        .contact-layout > * { flex: 1 1 400px; }
+        .contact-info-box { background-color: var(--surface-color); padding: 2rem; border-radius: 10px; }
+        .contact-info-box h3 { margin-top: 0; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; display: inline-block; }
+        .contact-info-box p { margin-bottom: 1rem; }
+        .contact-info-box a { color: var(--primary-color); text-decoration: none; }
+        footer { background-color: var(--surface-color); text-align: center; padding: 2rem 0; margin-top: 3rem; }
+        #admin-login-link { cursor: pointer; color: #555; font-size: 0.8rem; transition: color 0.3s; }
+        #admin-login-link:hover { color: var(--primary-color); }
+        #cookie-popup { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--surface-color); padding: 1.5rem; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); display: none; align-items: center; justify-content: space-between; z-index: 2000; }
+        @media (max-width: 992px) {
+            .detail-view-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { position: absolute; right: 0; top: 70px; background-color: var(--surface-color); width: 100%; flex-direction: column; align-items: center; transform: translateX(100%); transition: transform 0.5s ease-in; z-index: 100;}
+            .nav-links.nav-active { transform: translateX(0%); } .nav-links li { margin: 1.5rem 0; }
+            .hamburger { display: block; z-index: 101;}
+            .dashboard-header { flex-direction: column; align-items: flex-start; }
+            .signal-preview-card { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#home" class="logo nav-link" data-page="home-page"><span id="siteTitle"></span></a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active" data-page="home-page">Home</a></li>
+                <li><a href="#chi-siamo" class="nav-link" data-page="chi-siamo-page">Chi Siamo</a></li>
+                <li><a href="#segnalazioni" class="nav-link" data-page="segnalazioni-page">Segnalazioni</a></li>
+                <li><a href="#recensioni" class="nav-link" data-page="recensioni-page">Recensioni</a></li>
+                <li><a href="#contatti" class="nav-link" data-page="contatti-page">Contatti</a></li>
+                <li id="dashboard-nav-link" style="display: none;"><a href="#dashboard" class="nav-link" data-page="dashboard-page">Dashboard<span class="notification-badge" style="display: none;"></span></a></li>
+            </ul>
+            <div class="hamburger"> <div></div> <div></div> <div></div> </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home-page" class="page active">
+            <div class="container hero">
+                <h1 id="homeTitle"></h1><p id="homeSubtitle"></p><a href="#segnalazioni" id="homeCtaButton" class="btn nav-link" data-page="segnalazioni-page"></a>
+            </div>
+            <div class="container"><h2 id="featuresTitle"></h2>
+                <div class="features-grid">
+                    <div class="feature-card"><div class="icon" id="featureIcon1"></div><h3 id="featureTitle1"></h3><p id="featureText1"></p></div>
+                    <div class="feature-card"><div class="icon" id="featureIcon2"></div><h3 id="featureTitle2"></h3><p id="featureText2"></p></div>
+                    <div class="feature-card"><div class="icon" id="featureIcon3"></div><h3 id="featureTitle3"></h3><p id="featureText3"></p></div>
+                </div>
+            </div>
+        </section>
+        <section id="chi-siamo-page" class="page">
+            <div class="container">
+                <h2 id="chiSiamoTitle"></h2><p class="intro-text" id="chiSiamoIntroText"></p><h2 id="chiSiamoValuesTitle"></h2>
+                <div class="values-grid">
+                    <div class="value-card"><div class="icon" id="valueIcon1"></div><h3 id="valueTitle1"></h3><p id="valueText1"></p></div>
+                    <div class="value-card"><div class="icon" id="valueIcon2"></div><h3 id="valueTitle2"></h3><p id="valueText2"></p></div>
+                    <div class="value-card"><div class="icon" id="valueIcon3"></div><h3 id="valueTitle3"></h3><p id="valueText3"></p></div>
+                </div>
+            </div>
+        </section>
+        <section id="segnalazioni-page" class="page">
+            <div class="container"><h2 id="segnalazioniTitle"></h2>
+                <div class="form-container"><form id="segnalazione-form">
+                    <div class="form-group"><label>Nome e Cognome</label><input type="text" name="nome" required></div>
+                    <div class="form-group"><label>Email (Opzionale)</label><input type="email" name="email"></div>
+                    <div class="form-group"><label>Nome del Condominio</label><input type="text" name="condominio" required></div>
+                    <div class="form-group"><label>Appartamento / Interno</label><input type="text" name="interno" required></div>
+                    <div class="form-group"><label>Tipo di Problema</label><select name="problema" required><option value="">Seleziona...</option><option>Infiltrazione Acqua</option><option>Tubo Rotto</option><option>Luci non funzionanti</option><option>Ascensore bloccato</option><option>Cancello non funzionante</option><option>Pulizie</option><option>Altro</option></select></div>
+                    <div class="form-group"><label>Descrizione Dettagliata</label><textarea name="descrizione" required></textarea></div>
+                    <div class="form-group"><label>Allega una Foto (Opzionale)</label><input type="file" name="foto" accept="image/*"></div>
+                    <button type="submit" id="segnalazioniButton" class="btn"></button>
+                </form></div>
+            </div>
+        </section>
+        <section id="recensioni-page" class="page">
+            <div class="container">
+                <h2 id="recensioniTitle"></h2><div class="reviews-grid" id="public-reviews-container"></div><hr style="margin: 3rem 0; border-color: #333;">
+                <h2 id="lasciaRecensioneTitle"></h2>
+                <div class="form-container"><form id="review-form">
+                    <div class="form-group"><label>Il tuo Nome</label><input type="text" name="name" required></div>
+                    <div class="form-group"><label>Valutazione</label><select name="rating" required><option value="5">★★★★★ Eccellente</option><option value="4">★★★★☆ Molto Buono</option><option value="3">★★★☆☆ Buono</option><option value="2">★★☆☆☆ Sufficiente</option><option value="1">★☆☆☆☆ Insufficiente</option></select></div>
+                    <div class="form-group"><label>Commento</label><textarea name="comment" required></textarea></div>
+                    <button type="submit" id="recensioniButton" class="btn"></button>
+                </form></div>
+            </div>
+        </section>
+        <section id="contatti-page" class="page">
+            <div class="container">
+                <h2 id="contattiTitle"></h2>
+                <div class="contact-layout">
+                    <div class="contact-info-box">
+                        <h3 id="contattiInfoTitle"></h3>
+                        <p>📍 <strong id="contattiAddress"></strong></p>
+                        <p>📞 <a id="contattiPhone" href=""></a></p>
+                        <p>🕒 <strong id="contattiHours"></strong></p>
+                    </div>
+                    <div class="form-container">
+                        <h3 id="contattiFormTitle"></h3>
+                        <form id="contact-form" action="https://formspree.io/f/IL_TUO_CODICE_UNIVOCO" method="POST">
+                            <div class="form-group"><label id="contattiFormNameLabel"></label><input type="text" name="name" required></div>
+                            <div class="form-group"><label id="contattiFormEmailLabel"></label><input type="email" name="email" required></div>
+                            <div class="form-group"><label id="contattiFormMessageLabel"></label><textarea name="message" required></textarea></div>
+                            <button type="submit" class="btn" id="contattiFormButton"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="privacy-page" class="page"><div class="container content-container" id="privacy-content"></div></section>
+        <section id="cookie-page" class="page"><div class="container content-container" id="cookie-content"></div></section>
+        <section id="login-page" class="page">
+            <div class="container"><h2>Accesso Riservato</h2>
+                <div class="form-container" style="max-width: 400px;"><form id="login-form">
+                    <div class="form-group"><label>Username</label><input type="text" name="username" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+                    <button type="submit" class="btn">Login</button>
+                </form><div id="login-feedback" style="text-align: center; margin-top: 1rem;"></div></div>
+            </div>
+        </section>
+        <section id="dashboard-page" class="page"><div class="container" id="dashboard-content"></div></section>
+        <section id="dettaglio-segnalazione-page" class="page"><div class="container" id="dettaglio-segnalazione-content"></div></section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Studio Geom. Tartagni Marco</p>
+            <p><a href="#privacy" class="nav-link" data-page="privacy-page">Privacy Policy</a> | <a href="#cookie" class="nav-link" data-page="cookie-page">Cookie Policy</a></p>
+            <span id="admin-login-link">Accesso Admin</span>
+        </div>
+    </footer>
+    <div id="cookie-popup"><p>Questo sito utilizza strumenti tecnici per funzionare. Proseguendo, acconsenti al loro utilizzo. <a href="#cookie" class="nav-link" data-page="cookie-page" style="color:var(--primary-color)">Leggi l'informativa</a>.</p><button id="accept-cookies" class="btn">Ho capito</button></div>
+    <div id="feedback-modal" class="modal-overlay"><div class="modal-content">
+        <h3 id="modal-title"></h3><p id="modal-message"></p><div class="modal-actions"></div>
+    </div></div>
+
+    <script>
+    (() => {
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const DB_KEY = 'websiteDB_v17_layout_final';
+            const notificationSound = new Audio('https://cdn.freesound.org/previews/220/220172_4100839-lq.mp3');
+            notificationSound.volume = 0.5;
+            let notificationInterval = null;
+
+            const getDB = () => JSON.parse(localStorage.getItem(DB_KEY));
+            const saveDB = (db) => {
+                try {
+                    localStorage.setItem(DB_KEY, JSON.stringify(db));
+                    return true;
+                } catch (e) {
+                    console.error("Errore durante il salvataggio nel localStorage:", e);
+                    return false;
+                }
+            };
+
+            function initializeDB() {
+                if (!localStorage.getItem(DB_KEY)) {
+                    const defaultDB = {
+                        users: [
+                            { id: 1, username: 'superadmin', password: 'superpass', displayName: 'Superadmin', role: 'superadmin' },
+                            { id: 2, username: 'admin', password: 'password123', displayName: 'Admin di Default', role: 'admin' }
+                        ],
+                        segnalazioni: [],
+                        recensioni: [{id: Date.now(), name: "Mario Rossi", rating: 5, comment: "Servizio eccellente! Sempre disponibili e rapidi.", approved: true}],
+                        actionsLog: [],
+                        siteSettings: generateDefaultSettings(),
+                        session: { loggedIn: false, user: null, acceptedCookies: false }
+                    };
+                    saveDB(defaultDB);
+                }
+            }
+            
+            function navigateTo(pageId, params = {}) {
+                const { session } = getDB();
+                if ((pageId === 'dashboard-page' || pageId === 'dettaglio-segnalazione-page') && !session.loggedIn) {
+                    pageId = 'login-page';
+                }
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const targetPage = document.getElementById(pageId);
+                if(targetPage) targetPage.classList.add('active');
+
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.page === pageId));
+                document.querySelector('.nav-links').classList.remove('nav-active');
+                window.scrollTo(0, 0);
+
+                if (pageId === 'dashboard-page') renderDashboard();
+                if (pageId === 'dettaglio-segnalazione-page' && params.signalId) renderDettaglioSegnalazione(params.signalId);
+                
+                updateNavUI();
+            }
+            
+            function handleLogin(user) {
+                const db = getDB();
+                db.session.loggedIn = true;
+                db.session.user = { id: user.id, displayName: user.displayName || user.username, role: user.role };
+                saveDB(db);
+                startNotificationChecker();
+                navigateTo('dashboard-page');
+            }
+
+            function handleLogout() {
+                logAction('ha effettuato il logout');
+                const db = getDB();
+                db.session.loggedIn = false;
+                db.session.user = null;
+                saveDB(db);
+                stopNotificationChecker();
+                navigateTo('home-page');
+            }
+
+            function updateNavUI() {
+                const { loggedIn } = getDB().session;
+                document.getElementById('dashboard-nav-link').style.display = loggedIn ? 'list-item' : 'none';
+                document.getElementById('admin-login-link').style.display = loggedIn ? 'none' : 'inline';
+                updateNotificationBadges();
+            }
+
+            function applySettings() {
+                const settings = getDB().siteSettings;
+                for (const key in settings) {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        el.innerHTML = settings[key];
+                    }
+                }
+                const contactPhone = document.getElementById('contattiPhone');
+                if(contactPhone && settings.contattiPhone) contactPhone.href = `tel:${settings.contattiPhone.replace(/\s/g, '')}`;
+                
+                document.getElementById('privacy-content').innerHTML = `<h2>Privacy Policy</h2>${settings.privacyPolicy}`;
+                document.getElementById('cookie-content').innerHTML = `<h2>Cookie Policy</h2>${settings.cookiePolicy}`;
+                renderPublicRecensioni();
+            }
+
+            function checkForNewSignals() {
+                const { segnalazioni } = getDB();
+                const newSignalsCount = segnalazioni.filter(s => s.status === 'nuova').length;
+                const lastSeenCount = parseInt(localStorage.getItem('lastSeenSignalCount') || '0');
+                if (newSignalsCount > lastSeenCount) {
+                    notificationSound.play().catch(e => console.warn("Audio playback blocked by browser."));
+                }
+                localStorage.setItem('lastSeenSignalCount', newSignalsCount);
+                updateNotificationBadges();
+            }
+            
+            function updateNotificationBadges() {
+                const hasNew = (getDB().segnalazioni.filter(s => s.status === 'nuova').length > 0);
+                document.querySelectorAll('.notification-badge').forEach(badge => {
+                    badge.style.display = hasNew ? 'block' : 'none';
+                });
+            }
+
+            function markSignalsAsSeen() {
+                const newSignalsCount = getDB().segnalazioni.filter(s => s.status === 'nuova').length;
+                localStorage.setItem('lastSeenSignalCount', newSignalsCount);
+                updateNotificationBadges();
+            }
+            
+            function startNotificationChecker() {
+                if (notificationInterval) clearInterval(notificationInterval);
+                localStorage.setItem('lastSeenSignalCount', getDB().segnalazioni.filter(s => s.status === 'nuova').length);
+                notificationInterval = setInterval(checkForNewSignals, 5000);
+            }
+
+            function stopNotificationChecker() {
+                if (notificationInterval) clearInterval(notificationInterval);
+                notificationInterval = null;
+            }
+
+            function showModal(title, message, buttons = [{ text: 'Chiudi', class: 'btn', action: hideModal }]) {
+                document.getElementById('modal-title').innerHTML = title;
+                document.getElementById('modal-message').innerHTML = message;
+                const actionsContainer = document.querySelector('.modal-actions');
+                actionsContainer.innerHTML = '';
+                buttons.forEach(btnInfo => {
+                    const button = document.createElement('button');
+                    button.textContent = btnInfo.text;
+                    button.className = btnInfo.class;
+                    button.onclick = btnInfo.action;
+                    actionsContainer.appendChild(button);
+                });
+                document.getElementById('feedback-modal').classList.add('visible');
+            }
+
+            function hideModal() { document.getElementById('feedback-modal').classList.remove('visible'); }
+
+            function renderDashboard() {
+                const { user } = getDB().session;
+                if (!user) return;
+                
+                document.getElementById('dashboard-content').innerHTML = `
+                    <div class="dashboard-header">
+                        <div><h2>Dashboard Amministrazione</h2><p>Benvenuto, ${user.displayName}</p></div>
+                        <button id="logout-btn" class="btn btn-delete">Logout</button>
+                    </div>
+                    <div class="dashboard-stats" id="dashboard-stats-container"></div>
+                    <div class="tabs">
+                        <button class="tab-button" data-tab="segnalazioni-tab">Segnalazioni <span class="notification-badge" style="display: none;"></span></button>
+                        <button class="tab-button" data-tab="recensioni-moderate-tab">Recensioni da Approvare</button>
+                        <button class="tab-button" data-tab="recensioni-approved-tab">Recensioni Approvate</button>
+                        <button class="tab-button" data-tab="impostazioni-tab">Impostazioni Sito</button>
+                        <button class="tab-button superadmin-only" data-tab="user-management-tab">Gestione Utenti</button>
+                        <button class="tab-button superadmin-only" data-tab="activity-log-tab">Registro Attività</button>
+                    </div>
+                    <div id="segnalazioni-tab" class="tab-content"><div id="admin-segnalazioni-container"></div></div>
+                    <div id="recensioni-moderate-tab" class="tab-content"><div id="admin-recensioni-container"></div></div>
+                    <div id="recensioni-approved-tab" class="tab-content"><div id="admin-approved-recensioni-container"></div></div>
+                    <div id="impostazioni-tab" class="tab-content"><form id="site-settings-form" class="form-container" style="max-width: none; margin-top: 2rem;"></form></div>
+                    <div id="user-management-tab" class="tab-content superadmin-only"><div id="user-management-content"></div></div>
+                    <div id="activity-log-tab" class="tab-content superadmin-only"><div class="dashboard-card" id="activity-log-container"></div></div>
+                `;
+
+                document.querySelectorAll('.superadmin-only').forEach(el => { el.style.display = user.role === 'superadmin' ? '' : 'none'; });
+                document.querySelectorAll('#impostazioni-tab, #site-settings-form').forEach(el => { el.style.display = (user.role === 'superadmin' || user.role === 'admin') ? '' : 'none'; });
+
+                renderDashboardStats(); renderAdminSegnalazioni(); renderAdminRecensioni(); renderAdminApprovedRecensioni(); populateSettingsForm();
+                if (user.role === 'superadmin') { renderUserManagement(); renderActivityLog(); }
+                
+                const firstVisibleTab = document.querySelector('#dashboard-page .tabs .tab-button:not([style*="display: none"])');
+                if (firstVisibleTab) switchTab(firstVisibleTab.dataset.tab);
+            }
+            
+            function switchTab(tabId) {
+                document.querySelectorAll('#dashboard-page .tab-button').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+                document.querySelectorAll('#dashboard-page .tab-content').forEach(c => c.classList.toggle('active', c.id === tabId));
+                if (tabId === 'segnalazioni-tab') markSignalsAsSeen();
+            }
+
+            function renderDashboardStats() {
+                const { segnalazioni, recensioni } = getDB();
+                const stats = {
+                    nuove: segnalazioni.filter(s => s.status === 'nuova').length,
+                    daApprovare: recensioni.filter(r => !r.approved).length,
+                };
+                document.getElementById('dashboard-stats-container').innerHTML = `
+                    <div class="stat-card"><span class="value">${stats.nuove}</span><p>Segnalazioni Nuove</p></div>
+                    <div class="stat-card"><span class="value">${stats.daApprovare}</span><p>Recensioni da Approvare</p></div>`;
+            }
+            
+            function renderAdminSegnalazioni() {
+                const container = document.getElementById('admin-segnalazioni-container');
+                const segnalazioni = getDB().segnalazioni;
+                container.innerHTML = `<h3>Elenco Segnalazioni</h3>` + (segnalazioni.length === 0 ? '<p>Nessuna segnalazione ricevuta.</p>' : segnalazioni.map(s => {
+                    const date = new Date(s.timestamp);
+                    return `<div class="signal-preview-card">
+                        <div>
+                            <h4 style="color: ${s.status === 'nuova' ? 'var(--primary-color)' : 'inherit'}; margin-bottom: 0.2rem;">${s.problema} - Cond. ${s.condominio}</h4>
+                            <small>Da: ${s.nome} | Ricevuta il: ${date.toLocaleDateString('it-IT')}</small>
+                        </div>
+                        <div class="signal-preview-actions">
+                            <button class="btn btn-small" data-id="${s.id}" data-action="view-signal">Dettagli</button>
+                            ${s.status === 'nuova' ? `<button class="btn btn-small btn-approve" data-id="${s.id}" data-action="mark-read">Letta</button>` : ''}
+                            <button class="btn btn-small btn-delete" data-id="${s.id}" data-action="delete-signal">Elimina</button>
+                        </div>
+                    </div>`; }).join(''));
+            }
+
+            function renderDettaglioSegnalazione(signalId) {
+                navigateTo('dettaglio-segnalazione-page');
+                const signal = getDB().segnalazioni.find(s => s.id == signalId);
+                if(!signal) { navigateTo('dashboard-page'); return; }
+                const date = new Date(signal.timestamp);
+                const container = document.getElementById('dettaglio-segnalazione-content');
+                container.innerHTML = `
+                    <button class="btn" data-action="back-to-dashboard" style="margin-bottom: 2rem;">&larr; Torna alla Dashboard</button>
+                    <div class="dashboard-card">
+                        <div class="detail-view-layout">
+                            <div class="detail-view-info">
+                                <h3>Dettaglio Segnalazione: ${signal.problema}</h3>
+                                <div class="meta" style="font-size: 0.9rem; color: #aaa; margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0 15px;">
+                                    <span><strong>ID:</strong> ${signal.id}</span>
+                                    <span><strong>Stato:</strong> ${signal.status === 'nuova' ? 'Nuova' : 'Letta'}</span>
+                                </div>
+                                <hr style="border-color: #333; margin: 1rem 0;">
+                                <h4>Informazioni Mittente</h4>
+                                <p><strong>Nome:</strong> ${signal.nome}</p>
+                                <p><strong>Condominio:</strong> ${signal.condominio} (Interno: ${signal.interno})</p>
+                                <p><strong>Email:</strong> ${signal.email || 'Non fornita'}</p>
+                                <p><strong>Data Invio:</strong> ${date.toLocaleString('it-IT')}</p>
+                                <hr style="border-color: #333; margin: 1rem 0;">
+                                <h4>Descrizione del Problema</h4>
+                                <p>${signal.descrizione.replace(/\n/g, '<br>')}</p>
+                            </div>
+                            ${signal.fotoDataUrl ? `
+                                <div class="detail-view-image">
+                                    <h4>Immagine Allegata</h4>
+                                    <img src="${signal.fotoDataUrl}" alt="Foto allegata" class="detail-view-img">
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="actions" style="text-align:right; margin-top:2rem; border-top: 1px solid #333; padding-top: 1rem;">
+                            ${signal.status === 'nuova' ? `<button class="btn btn-approve" data-id="${signal.id}" data-action="mark-read-detail">Segna come Letta</button>` : ''}
+                            <button class="btn btn-delete btn-small" data-id="${signal.id}" data-action="delete-signal-detail">Elimina Segnalazione</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderRecensioni(containerId, filterFn, isDashboard) {
+                const container = document.getElementById(containerId);
+                const recensioni = getDB().recensioni.filter(filterFn);
+                if (!container) return;
+                container.innerHTML = (isDashboard ? `<h3>${containerId.includes('approved') ? 'Recensioni Pubblicate' : 'Recensioni da Approvare'}</h3>` : '') +
+                    (recensioni.length === 0 ? (isDashboard ? '<p>Nessuna recensione in questa categoria.</p>' : '<p style="text-align:center;">Sii il primo a lasciare una recensione!</p>') : recensioni.map(r => {
+                    if(isDashboard) {
+                        const isApprovedList = containerId.includes('approved');
+                        return `<div class="dashboard-card"><h3>${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)} - da ${r.name}</h3><p>"${r.comment}"</p><div class="actions" style="text-align:right;">${!isApprovedList ? `<button class="btn btn-small btn-approve" data-id="${r.id}" data-action="approve-review">Approva</button>` : ''}<button class="btn btn-delete btn-small" data-id="${r.id}" data-action="delete-review">Elimina</button></div></div>`;
+                    } else {
+                        return `<div class="review-card"><div style="color: #fdd835; font-size: 1.2rem;">${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)}</div><p>"${r.comment}"</p><div style="text-align:right; font-weight:bold;">- ${r.name}</div></div>`;
+                    }
+                }).join(''));
+            }
+            
+            const renderAdminRecensioni = () => renderRecensioni('admin-recensioni-container', r => !r.approved, true);
+            const renderAdminApprovedRecensioni = () => renderRecensioni('admin-approved-recensioni-container', r => r.approved, true);
+            const renderPublicRecensioni = () => renderRecensioni('public-reviews-container', r => r.approved, false);
+            
+            function renderUserManagement() {
+                const container = document.getElementById('user-management-content');
+                const db = getDB();
+                container.innerHTML = `
+                    <div class="form-container" style="max-width: none; margin-bottom: 2rem;">
+                        <h4>Crea Nuovo Utente Admin</h4>
+                        <form id="create-user-form" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                            <div class="form-group" style="flex: 1 1 200px; margin-bottom: 0;"><label>Nome Visualizzato</label><input type="text" name="displayName" required></div>
+                            <div class="form-group" style="flex: 1 1 200px; margin-bottom: 0;"><label>Username</label><input type="text" name="username" required></div>
+                            <div class="form-group" style="flex: 1 1 200px; margin-bottom: 0;"><label>Password</label><input type="password" name="password" required></div>
+                            <button type="submit" class="btn">Crea Utente</button>
+                        </form>
+                    </div>
+                    <h4>Utenti Esistenti</h4>
+                    ${db.users.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.8rem; background-color: var(--background-color); border-radius: 5px; margin-bottom: 0.5rem;"><div><strong>${u.displayName}</strong> (${u.username}) - Ruolo: ${u.role}</div>${u.id !== db.session.user.id && u.role !== 'superadmin' ? `<button class="btn btn-delete btn-small" data-id="${u.id}" data-action="delete-user">Elimina</button>` : '<span>(Non eliminabile)</span>'}</div>`).join('')}`;
+            }
+
+            function renderActivityLog() {
+                const container = document.getElementById('activity-log-container');
+                container.innerHTML = `<h3>Registro Attività</h3>` + (getDB().actionsLog.map(log => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 0.8rem 0; border-bottom: 1px solid #333;"><p><strong>${log.user}</strong> ${log.action}</p><span style="font-size:0.9em; color:#999;">${new Date(log.timestamp).toLocaleString('it-IT')}</span></div>`
+                ).join('') || '<p>Nessuna attività registrata.</p>');
+            }
+            
+            function populateSettingsForm() {
+                const settings = getDB().siteSettings;
+                const form = document.getElementById('site-settings-form');
+                let formHTML = `<h3>Personalizza il Sito</h3>`;
+                for (const key in settings) {
+                    const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                    const isTextarea = key.toLowerCase().includes('text') || key.toLowerCase().includes('policy') || key.toLowerCase().includes('subtitle');
+                    if (isTextarea) {
+                        formHTML += `<div class="form-group"><label>${label}</label><textarea name="${key}" style="min-height:100px;">${settings[key]}</textarea></div>`;
+                    } else {
+                        formHTML += `<div class="form-group"><label>${label}</label><input type="text" name="${key}" value="${settings[key]}"></div>`;
+                    }
+                }
+                formHTML += `<div style="display:flex; justify-content:space-between; align-items: center; margin-top:2rem;">
+                                <button type="submit" class="btn">Salva Impostazioni</button>
+                                <button type="button" class="btn btn-delete" data-action="reset-settings">Ripristina Impostazioni di Fabbrica</button>
+                             </div>`;
+                form.innerHTML = formHTML;
+            }
+
+            function setupEventListeners() {
+                document.body.addEventListener('click', handleGlobalClick);
+                document.getElementById('segnalazione-form').addEventListener('submit', handleSignalSubmit);
+                document.getElementById('review-form').addEventListener('submit', handleReviewSubmit);
+                document.getElementById('login-form').addEventListener('submit', handleLoginSubmit);
+                document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
+                document.getElementById('dashboard-page').addEventListener('submit', handleDashboardSubmit);
+            }
+            
+            function handleGlobalClick(e) {
+                const navLink = e.target.closest('.nav-link');
+                const button = e.target.closest('button[data-action]');
+                const tabButton = e.target.closest('.tab-button');
+
+                if (navLink?.dataset.page) { e.preventDefault(); navigateTo(navLink.dataset.page); }
+                if (e.target.id === 'admin-login-link') navigateTo('login-page');
+                if (e.target.closest('.hamburger')) document.querySelector('.nav-links').classList.toggle('nav-active');
+                if (e.target.id === 'accept-cookies') {
+                    const db = getDB(); db.session.acceptedCookies = true; saveDB(db);
+                    document.getElementById('cookie-popup').style.display = 'none';
+                }
+                if (e.target.id === 'logout-btn') handleLogout();
+                if (tabButton) switchTab(tabButton.dataset.tab);
+                if (button) handleDashboardAction(button.dataset.action, button.dataset.id);
+            }
+
+            function handleLoginSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const username = form.elements.username.value;
+                const password = form.elements.password.value;
+                const foundUser = getDB().users.find(u => u.username === username && u.password === password);
+                if (foundUser) handleLogin(foundUser);
+                else {
+                    const feedback = document.getElementById('login-feedback');
+                    feedback.textContent = 'Credenziali non valide.';
+                    feedback.style.color = 'var(--danger-color)';
+                }
+            }
+            
+            async function handleSignalSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                data.id = Date.now();
+                data.timestamp = new Date().toISOString();
+                data.status = 'nuova';
+                const file = formData.get('foto');
+                if (file && file.size > 0) {
+                    try {
+                        data.fotoDataUrl = await compressImage(file, { quality: 0.8, maxWidth: 1024, maxHeight: 1024 });
+                    } catch (error) {
+                        console.error("Error processing file:", error);
+                        showModal('Errore Immagine', 'Si è verificato un problema nel processare l\'immagine. Riprova.');
+                        return;
+                    }
+                } else {
+                    data.fotoDataUrl = null;
+                }
+                const db = getDB();
+                db.segnalazioni.unshift(data);
+                if (!saveDB(db)) {
+                    showModal('Errore di Salvataggio', 'Spazio di archiviazione insufficiente. L\'immagine potrebbe essere troppo grande anche dopo la compressione.');
+                    db.segnalazioni.shift(); // Rimuovo la segnalazione appena aggiunta se il salvataggio fallisce
+                } else {
+                    form.reset();
+                    showModal('Inviata con Successo!', 'La tua segnalazione è stata ricevuta.', [
+                        { text: 'Lascia una Recensione', class: 'btn', action: () => { hideModal(); navigateTo('recensioni-page'); } },
+                        { text: 'Chiudi', class: 'btn btn-delete', action: hideModal }
+                    ]);
+                }
+            }
+
+            function handleReviewSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                data.id = Date.now();
+                data.approved = false;
+                const db = getDB();
+                db.recensioni.unshift(data);
+                saveDB(db);
+                form.reset();
+                showModal('Grazie!', 'La tua recensione è stata inviata e verrà pubblicata dopo l\'approvazione.');
+            }
+
+            async function handleContactSubmit(e) {
+                e.preventDefault(); const form = e.target;
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch(form.action, {
+                        method: form.method,
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (response.ok) {
+                        form.reset();
+                        showModal('Messaggio Inviato!', 'Grazie per averci contattato. Ti risponderemo al più presto.');
+                    } else { throw new Error('Network response was not ok.'); }
+                } catch (error) {
+                    showModal('Errore', 'Si è verificato un problema durante l\'invio. Riprova più tardi.', [{text:'Chiudi', class:'btn btn-delete', action: hideModal}]);
+                }
+            }
+            
+            function handleDashboardSubmit(e) {
+                if (e.target.id === 'create-user-form') {
+                    e.preventDefault();
+                    const form = e.target; const formData = new FormData(form); const newUser = Object.fromEntries(formData.entries());
+                    if (!newUser.username || !newUser.password || !newUser.displayName) { return alert('Tutti i campi sono obbligatori.'); }
+                    const db = getDB();
+                    if (db.users.some(u => u.username === newUser.username)) return alert('Username già esistente.');
+                    newUser.id = Date.now(); newUser.role = 'admin'; db.users.push(newUser);
+                    logAction(`ha creato il nuovo utente '${newUser.displayName}'`); saveDB(db); renderUserManagement(); form.reset();
+                } else if (e.target.id === 'site-settings-form') {
+                    e.preventDefault();
+                    const form = e.target; const formData = new FormData(form);
+                    const db = getDB();
+                    for(let [key, value] of formData.entries()) { db.siteSettings[key] = value; }
+                    saveDB(db); logAction('ha modificato le impostazioni del sito'); applySettings(); showModal('Successo', 'Impostazioni salvate.');
+                }
+            }
+            
+            function handleDashboardAction(action, id) {
+                const db = getDB();
+                const actions = {
+                    'view-signal': () => navigateTo('dettaglio-segnalazione-page', { signalId: id }),
+                    'back-to-dashboard': () => navigateTo('dashboard-page'),
+                    'mark-read-detail': () => {
+                        const signal = db.segnalazioni.find(s => s.id == id);
+                        if(signal) { signal.status = 'letta'; logAction(`ha segnato come letta la segnalazione #${id}`); saveDB(db); navigateTo('dashboard-page'); }
+                    },
+                    'delete-signal-detail': () => {
+                        if (confirm('Eliminare questa segnalazione?')) {
+                            db.segnalazioni = db.segnalazioni.filter(s => s.id != id);
+                            saveDB(db); logAction(`ha eliminato la segnalazione #${id}`); navigateTo('dashboard-page');
+                        }
+                    },
+                    'mark-read': () => {
+                        const signal = db.segnalazioni.find(s => s.id == id);
+                        if (signal) { signal.status = 'letta'; logAction(`ha segnato come letta la segnalazione #${id}`); saveDB(db); renderAdminSegnalazioni(); renderDashboardStats(); }
+                    },
+                    'delete-signal': () => {
+                        if (confirm('Eliminare questa segnalazione?')) { logAction(`ha eliminato la segnalazione #${id}`); db.segnalazioni = db.segnalazioni.filter(s => s.id != id); saveDB(db); renderAdminSegnalazioni(); renderDashboardStats(); }
+                    },
+                    'delete-user': () => {
+                        if (confirm(`Sei sicuro di voler eliminare questo utente?`)) {
+                            const user = db.users.find(u => u.id == id);
+                            db.users = db.users.filter(u => u.id != id);
+                            logAction(`ha eliminato l'utente '${user.displayName}'`); saveDB(db); renderUserManagement();
+                        }
+                    },
+                    'approve-review': () => {
+                        const review = db.recensioni.find(r => r.id == id);
+                        if (review) { review.approved = true; logAction(`ha approvato la recensione di ${review.name}`); saveDB(db); renderAdminRecensioni(); renderAdminApprovedRecensioni(); renderPublicRecensioni(); renderDashboardStats(); }
+                    },
+                    'delete-review': () => {
+                        if (confirm('Eliminare questa recensione?')) { const review = db.recensioni.find(r => r.id == id); logAction(`ha eliminato la recensione di ${review.name}`); db.recensioni = db.recensioni.filter(r => r.id != id); saveDB(db); renderAdminRecensioni(); renderAdminApprovedRecensioni(); renderPublicRecensioni(); renderDashboardStats(); }
+                    },
+                    'reset-settings': () => {
+                        if(confirm('Sei sicuro di voler ripristinare tutte le impostazioni del sito ai valori originali? Questa azione è irreversibile.')) {
+                            const db = getDB();
+                            db.siteSettings = generateDefaultSettings();
+                            saveDB(db);
+                            logAction('ha ripristinato le impostazioni di fabbrica');
+                            alert('Impostazioni ripristinate con successo! La pagina verrà ricaricata.');
+                            window.location.reload();
+                        }
+                    }
+                };
+                if (actions[action]) actions[action]();
+            }
+
+            function compressImage(file, options) {
+                return new Promise((resolve, reject) => {
+                    const { quality = 0.8, maxWidth = 1024, maxHeight = 1024 } = options;
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = event => {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = () => {
+                            let width = img.width;
+                            let height = img.height;
+                            if (width > height) {
+                                if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+                            } else {
+                                if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width; canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/jpeg', quality));
+                        };
+                        img.onerror = reject;
+                    };
+                    reader.onerror = reject;
+                });
+            }
+
+            function logAction(action) {
+                const db = getDB();
+                const user = db.session.user;
+                if (!user) return;
+                db.actionsLog.unshift({ timestamp: new Date().toISOString(), user: user.displayName, action });
+                if (db.actionsLog.length > 100) db.actionsLog.pop();
+                saveDB(db);
+                if (document.getElementById('activity-log-tab')?.classList.contains('active')) { renderActivityLog(); }
+            }
+            
+            function generateDefaultSettings() {
+                return {
+                    'siteTitle': 'Studio Geom. Tartagni', 'homeTitle': 'Gestione Condominiale Semplice e Veloce',
+                    'homeSubtitle': "Lo Studio Geom. Tartagni Marco offre soluzioni moderne per l'amministrazione del tuo condominio. Segnala un problema o lascia una recensione in pochi click.",
+                    'homeCtaButton': 'Invia una Segnalazione', 'featuresTitle': 'Perché Sceglierci',
+                    'featureIcon1': '⚡️', 'featureTitle1': 'Rapidità', 'featureText1': 'Gestione rapida delle segnalazioni e interventi tempestivi per risolvere ogni problema nel minor tempo possibile.',
+                    'featureIcon2': '🤝', 'featureTitle2': 'Trasparenza', 'featureText2': 'Comunicazioni chiare e rendicontazione precisa. Accesso facile a tutte le informazioni che riguardano il tuo condominio.',
+                    'featureIcon3': '📱', 'featureTitle3': 'Digitalizzazione', 'featureText3': 'Utilizziamo strumenti digitali avanzati per semplificare la comunicazione e la gestione, tutto a portata di smartphone.',
+                    'chiSiamoTitle': 'La Nostra Filosofia', 'chiSiamoIntroText': "Con oltre vent'anni di esperienza, il nostro studio è un punto di riferimento per l'amministrazione condominiale. La nostra missione è garantire una gestione efficiente, trasparente e proattiva, mettendo al centro le esigenze dei condòmini.",
+                    'chiSiamoValuesTitle': 'I Nostri Valori Fondamentali',
+                    'valueIcon1': '🔍', 'valueTitle1': 'Trasparenza', 'valueText1': 'Crediamo nella massima chiarezza gestionale e contabile. Ogni condòmino ha diritto a informazioni complete e accessibili.',
+                    'valueIcon2': '⚙️', 'valueTitle2': 'Efficienza', 'valueText2': 'Ottimizziamo i processi per garantire risposte rapide alle segnalazioni e una manutenzione proattiva degli stabili.',
+                    'valueIcon3': '💡', 'valueTitle3': 'Innovazione', 'valueText3': 'Sfruttiamo la tecnologia per semplificare la comunicazione e rendere la gestione condominiale più moderna e intuitiva.',
+                    'segnalazioniTitle': 'Invia una Segnalazione', 'segnalazioniButton': 'Invia Segnalazione', 
+                    'recensioniTitle': 'Cosa Dicono di Noi', 'lasciaRecensioneTitle': 'Lascia la tua Recensione', 'recensioniButton': 'Invia Recensione',
+                    'contattiTitle': 'Contattaci', 'contattiInfoTitle': 'Contatti e Orari', 'contattiAddress': 'Via Pietro Turchi, 24, 47521 Cesena FC', 'contattiPhone': '0547 27857', 'contattiHours': 'Dal Lunedì al Venerdì, 09:00 - 12:00',
+                    'contattiFormTitle': 'Inviaci un Messaggio', 'contattiFormNameLabel': 'Il tuo Nome', 'contattiFormEmailLabel': 'La tua Email', 'contattiFormMessageLabel': 'Messaggio', 'contattiFormButton': 'Invia Messaggio',
+                    'privacyPolicy': `<h3>Informativa sul trattamento dei dati personali</h3><p>Questa informativa descrive come trattiamo i dati personali che ci fornisci tramite questo sito. Raccogliamo solo i dati necessari per erogare i nostri servizi. Questi dati sono usati esclusivamente per gestire le tue richieste e non vengono ceduti a terzi. Sono conservati in modo sicuro e hai il diritto di richiederne la modifica o la cancellazione in qualsiasi momento contattandoci.</p>`,
+                    'cookiePolicy': `<h3>Informativa sugli Strumenti Tecnici</h3><p>Questo sito utilizza strumenti tecnici, simili ai cookie, per funzionare correttamente. Nello specifico, usiamo il <strong>localStorage</strong> del browser per due scopi: salvare la tua preferenza riguardo a questo banner informativo e gestire la sessione di accesso degli amministratori. Non utilizziamo cookie di profilazione o di terze parti. Proseguendo la navigazione, acconsenti all'uso di questi strumenti tecnici indispensabili.</p>`
+                };
+            }
+
+            function init() {
+                initializeDB();
+                applySettings();
+                setupEventListeners();
+                const { session } = getDB();
+                if (!session.acceptedCookies) document.getElementById('cookie-popup').style.display = 'flex';
+                document.getElementById('current-year').textContent = new Date().getFullYear();
+                if (session.loggedIn && session.user) {
+                    startNotificationChecker(); navigateTo('dashboard-page');
+                } else {
+                    navigateTo('home-page');
+                }
+            }
+
+            init();
+        });
+    })();
+    </script>
+</body>
+</html>
