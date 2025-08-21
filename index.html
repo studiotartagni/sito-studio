@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio Geom. Tartagni Marco - Amministrazione Condomini</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-size='80' font-family='serif' fill='white' text-anchor='middle' dominant-baseline='central'%3ETM%3C/text%3E%3C/svg%3E">
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         :root {
@@ -48,7 +47,7 @@
         .value-card .icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
         .form-container, .content-container { background-color: var(--surface-color); padding: 2.5rem; border-radius: 10px; max-width: 700px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border-left: 3px solid var(--primary-color); }
         .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; text-align: left; }
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem 1rem; background-color: var(--background-color); border: 1px solid #333; border-radius: 5px; color: var(--text-color); font-size: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
         .btn { display: inline-block; background-color: var(--primary-color); color: #fff; padding: 0.8rem 1.8rem; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 1rem; transition: background-color 0.3s ease, transform 0.2s ease; }
         .btn:hover { background-color: var(--secondary-color); transform: translateY(-2px); }
@@ -205,14 +204,14 @@
     </footer>
     <div id="cookie-popup"><p>Questo sito utilizza strumenti tecnici per funzionare. Proseguendo, acconsenti al loro utilizzo. <a href="#cookie" class="nav-link" data-page="cookie-page" style="color:var(--primary-color)">Leggi l'informativa</a>.</p><button id="accept-cookies" class="btn">Ho capito</button></div>
     <div id="feedback-modal" class="modal-overlay"><div class="modal-content">
-        <h3 id="modal-title"></h3><p id="modal-message"></p><div class="modal-actions"></div>
+        <h3 id="modal-title"></h3><p id="modal-message"></p><div id="modal-body-content"></div><div class="modal-actions"></div>
     </div></div>
 
     <script>
     (() => {
         document.addEventListener('DOMContentLoaded', () => {
 
-            const DB_KEY = 'websiteDB_v17_layout_final';
+            const DB_KEY = 'websiteDB_v18_edit_users';
             const notificationSound = new Audio('https://cdn.freesound.org/previews/220/220172_4100839-lq.mp3');
             notificationSound.volume = 0.5;
             let notificationInterval = null;
@@ -295,7 +294,7 @@
                 for (const key in settings) {
                     const el = document.getElementById(key);
                     if (el) {
-                        el.innerHTML = settings[key];
+                         el.innerHTML = settings[key];
                     }
                 }
                 const contactPhone = document.getElementById('contattiPhone');
@@ -341,16 +340,19 @@
                 notificationInterval = null;
             }
 
-            function showModal(title, message, buttons = [{ text: 'Chiudi', class: 'btn', action: hideModal }]) {
+            function showModal(title, message, buttons = [{ text: 'Chiudi', class: 'btn', action: hideModal }], bodyContent = '') {
                 document.getElementById('modal-title').innerHTML = title;
                 document.getElementById('modal-message').innerHTML = message;
+                document.getElementById('modal-body-content').innerHTML = bodyContent;
                 const actionsContainer = document.querySelector('.modal-actions');
                 actionsContainer.innerHTML = '';
                 buttons.forEach(btnInfo => {
                     const button = document.createElement('button');
                     button.textContent = btnInfo.text;
                     button.className = btnInfo.class;
-                    button.onclick = btnInfo.action;
+                    if(btnInfo.type) button.type = btnInfo.type;
+                    if(btnInfo.form) button.form = btnInfo.form;
+                    if(btnInfo.action) button.onclick = btnInfo.action;
                     actionsContainer.appendChild(button);
                 });
                 document.getElementById('feedback-modal').classList.add('visible');
@@ -430,7 +432,6 @@
             }
 
             function renderDettaglioSegnalazione(signalId) {
-                navigateTo('dettaglio-segnalazione-page');
                 const signal = getDB().segnalazioni.find(s => s.id == signalId);
                 if(!signal) { navigateTo('dashboard-page'); return; }
                 const date = new Date(signal.timestamp);
@@ -503,7 +504,13 @@
                         </form>
                     </div>
                     <h4>Utenti Esistenti</h4>
-                    ${db.users.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.8rem; background-color: var(--background-color); border-radius: 5px; margin-bottom: 0.5rem;"><div><strong>${u.displayName}</strong> (${u.username}) - Ruolo: ${u.role}</div>${u.id !== db.session.user.id && u.role !== 'superadmin' ? `<button class="btn btn-delete btn-small" data-id="${u.id}" data-action="delete-user">Elimina</button>` : '<span>(Non eliminabile)</span>'}</div>`).join('')}`;
+                    ${db.users.map(u => `<div style="display:flex; flex-wrap: wrap; justify-content:space-between; align-items:center; padding: 0.8rem; background-color: var(--background-color); border-radius: 5px; margin-bottom: 0.5rem; gap: 1rem;">
+                        <div><strong>${u.displayName}</strong> (${u.username}) - Ruolo: ${u.role}</div>
+                        <div>
+                            <button class="btn btn-small" data-id="${u.id}" data-action="edit-user">Modifica</button>
+                            ${u.id !== db.session.user.id && u.role !== 'superadmin' ? `<button class="btn btn-delete btn-small" data-id="${u.id}" data-action="delete-user">Elimina</button>` : ''}
+                        </div>
+                    </div>`).join('')}`;
             }
 
             function renderActivityLog() {
@@ -535,11 +542,7 @@
 
             function setupEventListeners() {
                 document.body.addEventListener('click', handleGlobalClick);
-                document.getElementById('segnalazione-form').addEventListener('submit', handleSignalSubmit);
-                document.getElementById('review-form').addEventListener('submit', handleReviewSubmit);
-                document.getElementById('login-form').addEventListener('submit', handleLoginSubmit);
-                document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
-                document.getElementById('dashboard-page').addEventListener('submit', handleDashboardSubmit);
+                document.addEventListener('submit', handleFormSubmits);
             }
             
             function handleGlobalClick(e) {
@@ -559,9 +562,21 @@
                 if (button) handleDashboardAction(button.dataset.action, button.dataset.id);
             }
 
-            function handleLoginSubmit(e) {
+            function handleFormSubmits(e){
                 e.preventDefault();
-                const form = e.target;
+                const actions = {
+                    'segnalazione-form': handleSignalSubmit,
+                    'review-form': handleReviewSubmit,
+                    'login-form': handleLoginSubmit,
+                    'contact-form': handleContactSubmit,
+                    'create-user-form': handleCreateUserSubmit,
+                    'site-settings-form': handleSettingsSubmit,
+                    'edit-user-form': handleEditUserSubmit
+                };
+                if (actions[e.target.id]) actions[e.target.id](e.target);
+            }
+            
+            function handleLoginSubmit(form) {
                 const username = form.elements.username.value;
                 const password = form.elements.password.value;
                 const foundUser = getDB().users.find(u => u.username === username && u.password === password);
@@ -573,31 +588,21 @@
                 }
             }
             
-            async function handleSignalSubmit(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                data.id = Date.now();
-                data.timestamp = new Date().toISOString();
-                data.status = 'nuova';
+            async function handleSignalSubmit(form) {
+                const formData = new FormData(form); const data = Object.fromEntries(formData.entries());
+                data.id = Date.now(); data.timestamp = new Date().toISOString(); data.status = 'nuova';
                 const file = formData.get('foto');
                 if (file && file.size > 0) {
                     try {
                         data.fotoDataUrl = await compressImage(file, { quality: 0.8, maxWidth: 1024, maxHeight: 1024 });
                     } catch (error) {
-                        console.error("Error processing file:", error);
-                        showModal('Errore Immagine', 'Si è verificato un problema nel processare l\'immagine. Riprova.');
-                        return;
+                        showModal('Errore Immagine', 'Si è verificato un problema nel processare l\'immagine. Riprova.'); return;
                     }
-                } else {
-                    data.fotoDataUrl = null;
-                }
-                const db = getDB();
-                db.segnalazioni.unshift(data);
+                } else { data.fotoDataUrl = null; }
+                const db = getDB(); db.segnalazioni.unshift(data);
                 if (!saveDB(db)) {
-                    showModal('Errore di Salvataggio', 'Spazio di archiviazione insufficiente. L\'immagine potrebbe essere troppo grande anche dopo la compressione.');
-                    db.segnalazioni.shift(); // Rimuovo la segnalazione appena aggiunta se il salvataggio fallisce
+                    showModal('Errore di Salvataggio', 'Spazio di archiviazione insufficiente. L\'immagine è troppo grande.');
+                    db.segnalazioni.shift();
                 } else {
                     form.reset();
                     showModal('Inviata con Successo!', 'La tua segnalazione è stata ricevuta.', [
@@ -607,29 +612,17 @@
                 }
             }
 
-            function handleReviewSubmit(e) {
-                e.preventDefault();
-                const form = e.target;
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                data.id = Date.now();
-                data.approved = false;
-                const db = getDB();
-                db.recensioni.unshift(data);
-                saveDB(db);
-                form.reset();
+            function handleReviewSubmit(form) {
+                const formData = new FormData(form); const data = Object.fromEntries(formData.entries());
+                data.id = Date.now(); data.approved = false;
+                const db = getDB(); db.recensioni.unshift(data); saveDB(db); form.reset();
                 showModal('Grazie!', 'La tua recensione è stata inviata e verrà pubblicata dopo l\'approvazione.');
             }
 
-            async function handleContactSubmit(e) {
-                e.preventDefault(); const form = e.target;
+            async function handleContactSubmit(form) {
                 const formData = new FormData(form);
                 try {
-                    const response = await fetch(form.action, {
-                        method: form.method,
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    });
+                    const response = await fetch(form.action, { method: form.method, body: formData, headers: { 'Accept': 'application/json' } });
                     if (response.ok) {
                         form.reset();
                         showModal('Messaggio Inviato!', 'Grazie per averci contattato. Ti risponderemo al più presto.');
@@ -638,23 +631,26 @@
                     showModal('Errore', 'Si è verificato un problema durante l\'invio. Riprova più tardi.', [{text:'Chiudi', class:'btn btn-delete', action: hideModal}]);
                 }
             }
-            
+
             function handleDashboardSubmit(e) {
-                if (e.target.id === 'create-user-form') {
-                    e.preventDefault();
-                    const form = e.target; const formData = new FormData(form); const newUser = Object.fromEntries(formData.entries());
-                    if (!newUser.username || !newUser.password || !newUser.displayName) { return alert('Tutti i campi sono obbligatori.'); }
-                    const db = getDB();
-                    if (db.users.some(u => u.username === newUser.username)) return alert('Username già esistente.');
-                    newUser.id = Date.now(); newUser.role = 'admin'; db.users.push(newUser);
-                    logAction(`ha creato il nuovo utente '${newUser.displayName}'`); saveDB(db); renderUserManagement(); form.reset();
-                } else if (e.target.id === 'site-settings-form') {
-                    e.preventDefault();
-                    const form = e.target; const formData = new FormData(form);
-                    const db = getDB();
-                    for(let [key, value] of formData.entries()) { db.siteSettings[key] = value; }
-                    saveDB(db); logAction('ha modificato le impostazioni del sito'); applySettings(); showModal('Successo', 'Impostazioni salvate.');
-                }
+                if (e.target.id === 'create-user-form') handleCreateUserSubmit(e.target);
+                if (e.target.id === 'site-settings-form') handleSettingsSubmit(e.target);
+            }
+            
+            function handleCreateUserSubmit(form) {
+                const formData = new FormData(form); const newUser = Object.fromEntries(formData.entries());
+                if (!newUser.username || !newUser.password || !newUser.displayName) { return alert('Tutti i campi sono obbligatori.'); }
+                const db = getDB();
+                if (db.users.some(u => u.username === newUser.username)) return alert('Username già esistente.');
+                newUser.id = Date.now(); newUser.role = 'admin'; db.users.push(newUser);
+                logAction(`ha creato il nuovo utente '${newUser.displayName}'`); saveDB(db); renderUserManagement(); form.reset();
+            }
+
+            function handleSettingsSubmit(form) {
+                const formData = new FormData(form);
+                const db = getDB();
+                for(let [key, value] of formData.entries()) { db.siteSettings[key] = value; }
+                saveDB(db); logAction('ha modificato le impostazioni del sito'); applySettings(); showModal('Successo', 'Impostazioni salvate.');
             }
             
             function handleDashboardAction(action, id) {
@@ -679,6 +675,7 @@
                     'delete-signal': () => {
                         if (confirm('Eliminare questa segnalazione?')) { logAction(`ha eliminato la segnalazione #${id}`); db.segnalazioni = db.segnalazioni.filter(s => s.id != id); saveDB(db); renderAdminSegnalazioni(); renderDashboardStats(); }
                     },
+                    'edit-user': () => showEditUserModal(id),
                     'delete-user': () => {
                         if (confirm(`Sei sicuro di voler eliminare questo utente?`)) {
                             const user = db.users.find(u => u.id == id);
@@ -705,6 +702,57 @@
                     }
                 };
                 if (actions[action]) actions[action]();
+            }
+
+            function showEditUserModal(userId) {
+                const db = getDB();
+                const user = db.users.find(u => u.id == userId);
+                const formBody = `
+                    <form id="edit-user-form" data-user-id="${userId}">
+                        <div class="form-group"><label>Nome Visualizzato</label><input type="text" name="displayName" value="${user.displayName}" required></div>
+                        <div class="form-group"><label>Username</label><input type="text" name="username" value="${user.username}" required></div>
+                        <div class="form-group"><label>Nuova Password (lasciare vuoto per non modificare)</label><input type="password" name="password"></div>
+                    </form>`;
+                const buttons = [
+                    { text: 'Salva Modifiche', class: 'btn', type: 'submit', form: 'edit-user-form' },
+                    { text: 'Annulla', class: 'btn btn-delete', action: hideModal }
+                ];
+                showModal(`Modifica Utente: ${user.displayName}`, '', buttons, formBody);
+            }
+
+            function handleEditUserSubmit(form) {
+                const userId = form.dataset.userId;
+                const formData = new FormData(form);
+                const updatedData = Object.fromEntries(formData.entries());
+                const db = getDB();
+                const userIndex = db.users.findIndex(u => u.id == userId);
+                
+                // Controlla se il nuovo username è già in uso da un ALTRO utente
+                if (db.users.some(u => u.username === updatedData.username && u.id != userId)) {
+                    return alert('Questo username è già in uso da un altro account.');
+                }
+                
+                db.users[userIndex].displayName = updatedData.displayName;
+                db.users[userIndex].username = updatedData.username;
+                if (updatedData.password) {
+                    db.users[userIndex].password = updatedData.password;
+                }
+                
+                logAction(`ha modificato i dati dell'utente '${updatedData.displayName}'`);
+                
+                // Se l'utente ha modificato se stesso, forza il logout
+                if(db.session.user.id == userId) {
+                    db.session.loggedIn = false;
+                    db.session.user = null;
+                    saveDB(db);
+                    hideModal();
+                    alert('I tuoi dati sono stati aggiornati. Per favore, effettua nuovamente il login.');
+                    navigateTo('login-page');
+                } else {
+                    saveDB(db);
+                    hideModal();
+                    renderUserManagement();
+                }
             }
 
             function compressImage(file, options) {
